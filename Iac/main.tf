@@ -1,7 +1,18 @@
-resource "aws_instance" "web" {
-  ami           = "ami-0c02fb55956c7d316"  # Amazon Linux 2 AMI
+resource "aws_instance" "demo" {
+  ami           = "ami-0c02fb55956c7d316" # Amazon Linux 2 (or use Ubuntu AMI if preferred)
   instance_type = "t2.micro"
+  key_name      = "your-key-pair" # Replace with your actual key pair name
+
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo apt-get update -y
+              sudo apt-get install -y nginx
+              sudo systemctl enable nginx
+              sudo systemctl start nginx
+              echo "<h1>Deployed via Terraform user_data</h1>" | sudo tee /var/www/html/index.html
+              EOF
+
   tags = {
-    Name = "HarnessDemo"
+    Name = "harness-demo-instance"
   }
 }
