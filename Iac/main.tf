@@ -3,7 +3,7 @@ resource "aws_instance" "demo" {
   instance_type = "t2.micro"
   key_name      = "us-east-1-keypair" # Replace with your actual key pair name
 
-  user_data = <<-EOF
+  user_data = <<EOF
               #!/bin/bash
               sudo apt-get update -y
               sudo apt-get install -y nginx
