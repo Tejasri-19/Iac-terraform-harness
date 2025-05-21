@@ -1,22 +1,16 @@
-resource "aws_instance" "web" {
-  ami                    = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2
-  instance_type          = "t2.micro"
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = var.security_group_ids
-  key_name               = var.key_name
+resource "aws_instance" "demo" {
+  ami           = "ami-0c02fb55956c7d316" # Amazon Linux 2 (or use Ubuntu AMI if preferred)
+  instance_type = "t2.micro"
+  key_name      = "us-east-1-keypair" # Replace with your actual key pair name
 
-  user_data = <<EOF
-#!/bin/bash
-echo "User data script started" > /var/tmp/init.log
-yum update -y
-amazon-linux-extras install -y nginx1
-systemctl start nginx
-systemctl enable nginx
-echo "NGINX installed and started" >> /var/tmp/init.log
-EOF
+  user_data = <<-EOF
+            #!/bin/bash
+            sudo yum update -y
+            sudo amazon-linux-extras install nginx1 -y
+            sudo systemctl enable nginx
+            sudo systemctl start nginx
+            echo "<h1>Deployed via Terraform user_data</h1>" | sudo tee /usr/share/nginx/html/index.html
+            EOF
 
   tags = {
-    Name = "nginx-inline-script"
-  }
-}
-
+    Name = "harness-demo-instance"
