@@ -3,14 +3,8 @@ resource "aws_instance" "demo" {
   instance_type = "t2.micro"
   key_name      = "us-east-1-keypair" # Replace with your actual key pair name
 
-  user_data = <<-EOF
-            #!/bin/bash
-            sudo yum update -y
-            sudo amazon-linux-extras install nginx1 -y
-            sudo systemctl enable nginx
-            sudo systemctl start nginx
-            echo "<h1>Deployed via Terraform user_data</h1>" | sudo tee /usr/share/nginx/html/index.html
-            EOF
+  user_data = templatefile("${path.module}/user_data.sh", {})
+
 
   tags = {
     Name = "harness-demo-instance"
