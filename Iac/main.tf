@@ -1,12 +1,22 @@
-resource "aws_instance" "demo" {
-  ami           = "ami-0c02fb55956c7d316" # Amazon Linux 2 (or use Ubuntu AMI if preferred)
-  instance_type = "t2.micro"
-  key_name      = "us-east-1-keypair" # Replace with your actual key pair name
+resource "aws_instance" "web" {
+  ami                    = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2
+  instance_type          = "t2.micro"
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = var.security_group_ids
+  key_name               = var.key_name
 
-  user_data = templatefile("${path.module}/user_data.sh", {})
-
+  user_data = <<EOF
+#!/bin/bash
+echo "User data script started" > /var/tmp/init.log
+yum update -y
+amazon-linux-extras install -y nginx1
+systemctl start nginx
+systemctl enable nginx
+echo "NGINX installed and started" >> /var/tmp/init.log
+EOF
 
   tags = {
-    Name = "harness-demo-instance"
+    Name = "nginx-inline-script"
   }
 }
+
